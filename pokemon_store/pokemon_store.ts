@@ -20,9 +20,6 @@ class PokemonStore {
   }
 
   addPokemon(pokemon): void {
-    console.log(
-      `__________IN INventory ${this.capturedPokemons.length}___________`
-    );
     if (
       this.capturedPokemons.find(
         (existingPokemon) => existingPokemon.name === pokemon.name
@@ -30,10 +27,6 @@ class PokemonStore {
     ) {
       this.capturedPokemons.push(pokemon);
     }
-    for (let i = 0; i < this.capturedPokemons.length; i++) {
-      console.log({ ...this.capturedPokemons[i] });
-    }
-    console.log('***********END***********');
   }
 
   removePokemon(name): void {

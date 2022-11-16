@@ -6,7 +6,7 @@ import { pokemonInventory, type PokemonDetails } from '../../pokemon_store';
 import { v4 as uuid } from 'uuid';
 
 interface ShowPokemonDetailsProps {
-  params: PokemonDetails | {};
+  params: PokemonDetails;
   onClick: (pokemonName?: string) => void;
   buttonText: string;
   disableButtonAfterClick: boolean;
