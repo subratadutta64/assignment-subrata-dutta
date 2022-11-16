@@ -1,28 +1,29 @@
-function FormatData(data) {
-  let pokemonStats = {};
-  pokemonStats["name"] = data.name;
-  pokemonStats["height"] = data.height;
-  pokemonStats["weight"] = data.weight;
-  pokemonStats["type"] = data.types[0].type.name;
-  pokemonStats["picture"] =
-    data.sprites.other["official-artwork"].front_default;
-  return pokemonStats;
+import { type PokemonDetails } from '../pokemon_store';
+
+function formatData(data): PokemonDetails {
+  const { name, height, weight, types, sprites } = data;
+  return {
+    name,
+    height,
+    weight,
+    type: types[0].type.name,
+    picture: sprites.other['official-artwork'].front_default,
+  };
 }
 
-async function FetchPokemonDetails(searchedValue: string) {
-  console.log(`searchedValue: ${searchedValue}`);
-  let pokemonData = {};
+async function FetchPokemonDetails(
+  searchedValue: string | undefined
+): Promise<PokemonDetails | {}> {
   try {
     const response = await fetch(
-      `https://pokeapi.co/api/v2/pokemon/${searchedValue}`
+      `https://pokeapi.co/api/v2/pokemon/${String(searchedValue)}`
     );
     const data = await response.json();
-    pokemonData = FormatData(data);
+    return formatData(data);
   } catch (error) {
     console.log(error);
+    return {};
   }
-
-  return pokemonData;
 }
 
 export { FetchPokemonDetails };

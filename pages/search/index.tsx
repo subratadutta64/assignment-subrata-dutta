@@ -1,51 +1,77 @@
-import { SearchBar } from "../../components/search_bar";
-import { ShowPokemonDetails } from "../../components/pokemon_details";
-import { FetchPokemonDetails } from "../../api_calls";
-import { useState } from "react";
+import React, { ReactElement, useState } from 'react';
+import { SearchBar, type SearchBarProps } from '../../components/search_bar';
+import { ShowPokemonDetails } from '../../components/pokemon_details';
+import { FetchPokemonDetails } from '../../api_calls';
+import { Spinner } from '../../components/spinner';
+import { type PokemonDetails, pokemonInventory } from '../../pokemon_store';
+import { Link } from '../../components/links';
+import { useRouter } from 'next/router';
 
-function SearchPage() {
+function SearchPage(): ReactElement {
   const [searchedValue, setSearchedValue] = useState<string>();
-  const [pokemonData, setpokemonData] = useState<any>();
-
-  // useEffect=()=>{
-
-  // }
-
-  function updateSearchedValue(newValue) {
-    setSearchedValue(newValue);
-    // console.log(searchedValue);
-  }
+  const [pokemonData, setpokemonData] = useState<PokemonDetails | {}>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const router = useRouter();
 
   console.log(searchedValue);
-  let props = {};
-  props["updateSearchedValue"] = updateSearchedValue;
-  const searchBarComponent = SearchBar(props);
 
-  async function search(e: any) {
+  async function search(e: React.MouseEvent): Promise<void> {
     e.preventDefault();
-    console.log(`Searched for ${searchedValue}`);
+    setIsLoading(true);
+    console.log(`Searched for ${String(searchedValue)}`);
     const data = await FetchPokemonDetails(searchedValue);
     setpokemonData(data);
-    console.log(data);
+    console.log(`API call Success ${String(data)}`);
+    setIsLoading(false);
   }
-  if (pokemonData) {
+
+  function capturePokemon(): void {
+    pokemonInventory.capturedPokemons.forEach((pokemon) => {
+      console.log({ ...pokemon });
+    });
+    console.log('*************HI*********');
+    console.log(pokemonData);
+    pokemonInventory.addPokemon(pokemonData);
+    pokemonInventory.capturedPokemons.forEach((pokemon) => {
+      console.log({ ...pokemon });
+    });
+  }
+
+  async function redirectToInventory(): Promise<void> {
+    await router.push('/inventory');
+  }
+
+  // props["updateSearchedValue"] = updateSearchedValue;
+  // props['search'] = search;
+
+  if (pokemonData != null) {
     console.log(pokemonData);
   }
 
+  const searchProps: SearchBarProps = {
+    updateSearchedValue: setSearchedValue,
+    search,
+  };
+  const showPokemonDetailsProps = {
+    params: pokemonData,
+    onClick: capturePokemon,
+    buttonText: 'Capture',
+    disableButtonAfterClick: true,
+  };
+  const linkProps = {
+    text: 'Wanna!! See your captured Pokemon.',
+    link: 'Go Here in inventory',
+    onClick: redirectToInventory,
+  };
   return (
-    <div className="">
-      <form onSubmit={search} className="my-4">
-        {searchBarComponent}
-      </form>
-      {pokemonData && <ShowPokemonDetails props={pokemonData} />}
-      {/* <div className="bg-mint text-mint fill-current">
-        <img
-          src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/35.png"
-          alt="Pic of the author"
-        />
-        <img src="" alt="" />
-      </div> */}
-    </div>
+    <>
+      <SearchBar {...searchProps} />
+      {!isLoading && (pokemonData != null) && (
+        <ShowPokemonDetails {...showPokemonDetailsProps} />
+      )}
+      {isLoading && <Spinner />}
+      <Link {...linkProps} />
+    </>
   );
 }
 
