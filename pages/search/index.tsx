@@ -18,18 +18,12 @@ function SearchPage(): ReactElement {
   async function search(e: React.MouseEvent): Promise<void> {
     e.preventDefault();
     setIsLoading(true);
-    console.log(`Searched for ${String(searchedValue)}`);
     const data = await FetchPokemonDetails(searchedValue);
     setpokemonData(data);
-    console.log(`API call Success ${String(data)}`);
     setIsLoading(false);
   }
 
   function capturePokemon(): void {
-    pokemonInventory.capturedPokemons.forEach((pokemon) => {
-      console.log({ ...pokemon });
-    });
-    console.log('*************HI*********');
     console.log(pokemonData);
     pokemonInventory.addPokemon(pokemonData);
     pokemonInventory.capturedPokemons.forEach((pokemon) => {
@@ -40,9 +34,6 @@ function SearchPage(): ReactElement {
   async function redirectToInventory(): Promise<void> {
     await router.push('/inventory');
   }
-
-  // props["updateSearchedValue"] = updateSearchedValue;
-  // props['search'] = search;
 
   if (pokemonData != null) {
     console.log(pokemonData);
@@ -66,7 +57,7 @@ function SearchPage(): ReactElement {
   return (
     <>
       <SearchBar {...searchProps} />
-      {!isLoading && (pokemonData != null) && (
+      {!isLoading && pokemonData != null && (
         <ShowPokemonDetails {...showPokemonDetailsProps} />
       )}
       {isLoading && <Spinner />}

@@ -24,12 +24,10 @@ function InventoryPage(): ReactElement {
   }
 
   function releasePokemon(pokemonName: string): void {
-    console.log(`********${pokemonName}**********`);
     pokemonInventory.removePokemon(pokemonName);
     pokemonInventory.capturedPokemons.forEach((pokemon) => {
       console.log({ ...pokemon });
     });
-    console.log(pokemonInventory.capturedPokemons.length);
   }
 
   const searchProps: SearchBarProps = {
